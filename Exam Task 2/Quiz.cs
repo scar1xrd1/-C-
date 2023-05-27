@@ -9,10 +9,23 @@ using System.Xml.Linq;
 
 namespace Exam_Task_2
 {
+    struct Standing
+    {
+        public string Login { get; set; }
+        public int Ball { get; set; }
+
+        public Standing(string login, int ball)
+        {
+            this.Login = login;
+            this.Ball = ball;
+        }
+    }
+
     internal struct Quiz
     {
         public string Name { get; set; } = null;
-        public List<Question> Questions { get;set; } = new List<Question>();
+        public List<Question> Questions { get; set; } = new List<Question>();
+        public List<Standing> Standings { get; set; } = new List<Standing>();
 
         public Quiz(string name) { Name = name; }            
     }
@@ -21,8 +34,8 @@ namespace Exam_Task_2
 
     class QuizManager : InputMethods
     {
-        List<Quiz> quizzes = LoadJSON(defaultPATH);
-        private static string defaultPATH = "quiz.json";
+        public List<Quiz> quizzes = LoadJSON(defaultPATH);
+        public static string defaultPATH = "quiz.json";
 
         public QuizManager() { }
 
@@ -71,7 +84,7 @@ namespace Exam_Task_2
             Console.WriteLine("Викторина создана!");
         }
 
-        private async void SaveJSON(string path)
+        public async void SaveJSON(string path)
         {
             File.Delete(path);
             using (FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate))

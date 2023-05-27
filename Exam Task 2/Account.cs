@@ -2,26 +2,7 @@
 using System.Text.Json;
 namespace Exam_Task_2
 {
-    class InputMethods
-    {
-        public string? InputCycle(string msg)
-        {
-            string? text;
-            while (true)
-            {
-                text = Input(msg);
-                if (!string.IsNullOrEmpty(text)) { return text; }
-            }
-        }
-
-        public string? Input(string msg)
-        {
-            Console.Write(msg); string? text = Console.ReadLine(); Console.Clear();
-            return text;
-        }
-    }
-
-    record class Account(string Login, string Password);
+    record class Account(string Login, string Password, DateTime DateOfBirth);
 
     class AccountManager : InputMethods
     {
@@ -30,12 +11,13 @@ namespace Exam_Task_2
 
         public AccountManager() { }
 
-        public void LoginAccount()
+        public int LoginAccount()
         {
             if(accounts.Count > 0)
             {
                 string? login = InputCycle("Введите логин -> ");
                 string? password = InputCycle("Введите пароль -> ");
+                int index = 0;
 
                 bool hasLogin = false, hasPassword = false;
 
@@ -43,6 +25,7 @@ namespace Exam_Task_2
                 {
                     if (accounts[i].Login == login)
                     {
+                        index = i;
                         hasLogin = true;
                         if (accounts[i].Password == password) { hasPassword = true; break; }
                         break;
@@ -53,17 +36,23 @@ namespace Exam_Task_2
                 {
                     if(hasPassword)
                     {
+                        Console.WriteLine("Вы вошли в аккаунт!");
+                        return index;
                         // ВХОД ВЫПОЛНЕН
                     }
-                    else Console.WriteLine();
+                    else Console.WriteLine("Неверный пароль!");
                 }
+                else Console.WriteLine("Такого логина не существует!");
             }
             else Console.WriteLine("Ещё не создано ни одного аккаунта!");
+            return -1;
         }
 
         public void RegisterAccount()
         {
             string? login;
+            DateTime dateOfBirth;
+
             while(true)
             {
                 login = InputCycle("Введите логин -> ");
@@ -78,7 +67,15 @@ namespace Exam_Task_2
                 }
             }
             string? password = InputCycle("Введите пароль -> ");
-            accounts.Add(new Account(login, password));
+
+            while(true)
+            {
+                string? date = Input("Введите дату рождения в формате 22/05/2006 -> ");
+                if(DateTime.TryParse(date, out dateOfBirth) && dateOfBirth < DateTime.Now) { break; }
+                else Console.WriteLine("Вы ввели некорректную дату, либо вы ещё не родились!");
+            }
+
+            accounts.Add(new Account(login, password, dateOfBirth));
             SaveJSON(defaultPATH);
             Console.WriteLine("Аккаунт создан!");            
         }
